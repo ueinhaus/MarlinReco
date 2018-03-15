@@ -28,6 +28,8 @@ public:
   virtual void end();
  
 private:
+  CreatePDFProcessor(const CreatePDFProcessor&) = delete;
+  CreatePDFProcessor& operator=(const CreatePDFProcessor&) = delete;
   void CalculateDeltaPosition(float charge, TVector3 &p, const float* caylpos, float* delpos);
 
   std::string _description{};
@@ -43,11 +45,11 @@ private:
   std::vector<float> _dEdxParamsKaon{};
   std::vector<float> _dEdxParamsProton{};
 
-  float _dEdxNormalization{}, _dEdxErrorFactor{};
+  float _dEdxNormalization{}, _dEdxErrorFactor{}, _bfield{};
 
   LikelihoodPID *_myPID{};
   TFile* _fpdf{};
-  TH1F* pidvariable[6][18]{};
+  TH1F* pidvariable[6][21]{};
   std::string _filename{};
 
   std::string itos(int i)
