@@ -65,6 +65,10 @@ class TOFEstimators : public marlin::Processor {
         */
         int _maxEcalLayer{};
 
+        /** Stores MaxPFOMom steering parameter.
+        */
+        double _maxPFOMom{};
+
         /** Stores current event number.
         */
         int _nEvent{};

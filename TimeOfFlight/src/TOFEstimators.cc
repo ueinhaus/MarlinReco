@@ -67,6 +67,11 @@ TOFEstimators::TOFEstimators() : marlin::Processor("TOFEstimators") {
                             _maxEcalLayer,
                             int(10) );
 
+    registerOptionalParameter("MaxPFOMom",
+                            "Skip all PFOs with a momentum above this value; set to -1 to include all PFOS; default: -1",
+                            _maxPFOMom,
+                            double(-1) );
+
 }
 
 
@@ -90,6 +95,7 @@ void TOFEstimators::processEvent(EVENT::LCEvent * evt){
     RandGauss::setTheSeed( marlin::Global::EVENTSEEDER->getSeed(this) );
     ++_nEvent;
     streamlog_out(DEBUG9)<<std::endl<<"==========Event========== "<<_nEvent<<std::endl;
+    auto startTime = std::chrono::steady_clock::now();
 
     LCCollection* pfos = evt->getCollection(_pfoCollectionName);
     LCCollection* setRelations = evt->getCollection("SETSpacePointRelations");
@@ -104,6 +110,12 @@ void TOFEstimators::processEvent(EVENT::LCEvent * evt){
         streamlog_out(DEBUG9)<<std::endl<<"Starting to analyze "<<i+1<<" PFO"<<std::endl;
         ReconstructedParticle* pfo = static_cast <ReconstructedParticle*> ( pfos->getElementAt(i) );
 
+        if (_maxPFOMom)
+        {
+          const double* pfomom = pfo->getMomentum();
+          double momabs = sqrt(pfomom[0]*pfomom[0] + pfomom[1]*pfomom[1] + pfomom[2]*pfomom[2]);
+          if (momabs>_maxPFOMom) continue;
+        }
         int nClusters = pfo->getClusters().size();
         int nTracks = pfo->getTracks().size();
 
